@@ -1,0 +1,70 @@
+body {
+    background-color: #f8f9fa;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Task Cards */
+.task-card {
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.task-card h6 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Column Styles */
+.task-card.todo {
+    background: linear-gradient(180deg, #fde2e2, #ffffff);
+    border: 1px solid #f5c2c7;
+}
+
+.task-card.done {
+    background: linear-gradient(180deg, #d1e7dd, #ffffff);
+    border: 1px solid #badbcc;
+}
+
+/* Task Item */
+.task-item {
+    border: none;
+    font-size: 14px;
+    transition: all 0.4s ease;
+}
+
+/* Add Task Form */
+.add-task-form {
+    max-width: 600px;
+    margin: auto;
+}
+
+.btn-group button i {
+    font-size: 1rem;
+}
+
+.btn-group button:hover {
+    opacity: 0.85;
+}
+
+/* Animations */
+.task-move-out {
+    opacity: 0;
+    transform: translateX(40px);
+}
+
+.task-move-in {
+    animation: slideIn 0.4s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

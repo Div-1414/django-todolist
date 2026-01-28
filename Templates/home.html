@@ -1,0 +1,183 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- ✅ NAVBAR -->
+<nav class="navbar navbar-expand-lg px-4" style="background-color:#ffc107;">
+
+
+
+
+
+    <!-- Left: App name -->
+    <span class="navbar-brand fw-bold">Todo</span>
+
+    <!-- Center: Logged-in username -->
+    <div class="mx-auto text-white">
+        Logged in as <strong>{{ request.user.username }}</strong>
+    </div>
+
+    <!-- Right: Logout -->
+    <div>
+        <a href="{% url 'logout'   %}" class="btn btn-dark btn-sm">
+            Logout
+        </a>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="container mt-4 flex-grow-1">
+
+    <h5 class="text-muted">
+        {% now "l, F j, Y" %}
+    </h5>
+
+    <h3 class="fw-bold mb-4">Todo List</h3>
+
+    <div class="row g-4">
+
+        <!-- TO DO (UNDONE TASKS) -->
+        <div class="col-md-6">
+            <div class="task-card todo">
+                <h6>To Do</h6>
+
+                <ul class="list-group">
+                    {% for task in undone_task %}
+                    <li class="list-group-item task-item d-flex justify-content-between align-items-center">
+
+                        <span class="task-content">{{ task.task }}</span>
+
+                        <div class="btn-group btn-group-sm task-actions">
+                            <!-- Mark as Done -->
+                            <a href="{% url 'mark_as_done' task.pk %}"
+                               class="btn btn-success move-to-done">
+                                Mark as Done
+                            </a>
+
+                            <!-- Edit -->
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary edit-btn">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <!-- Delete -->
+                            <a href="{% url 'delete_task' task.pk %}"
+                               class="btn btn-danger delete-btn">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">
+                        No pending tasks
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- DONE TASKS -->
+        <div class="col-md-6">
+            <div class="task-card done">
+                <h6>Done</h6>
+
+                <ul class="list-group">
+                    {% for done in done_task %}
+                    <li class="list-group-item task-item d-flex justify-content-between align-items-center">
+
+                        <span class="task-content">{{ done.task }}</span>
+
+                        <div class="btn-group btn-group-sm">
+                            <!-- Mark as Undone -->
+                            <a href="{% url 'mark_as_undone' done.pk %}"
+                               class="btn btn-warning move-to-todo">
+                                Mark as Undone
+                            </a>
+                        </div>
+
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">
+                        No completed tasks
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ADD NEW TASK FORM -->
+    <div class="add-task-form mt-5">
+        <form class="d-flex gap-2"
+              action="{% url 'addtask' %}"
+              method="POST">
+            {% csrf_token %}
+            <input type="text"
+                   name="task"
+                   class="form-control"
+                   placeholder="Enter new task..."
+                   required>
+            <button type="submit" class="btn btn-primary">
+                Add New Task
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<!-- ✅ FOOTER -->
+<footer class="text-dark text-center py-3 mt-auto" style="background-color:#ffc107;">
+
+    <span>TodoApp &copy; {{ now|date:"Y" }}</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ✅ ANIMATION SCRIPT (UNCHANGED) -->
+<script>
+document.addEventListener("click", function (e) {
+
+    const link = e.target.closest("a");
+    if (!link) return;
+
+    // Animate ONLY mark buttons
+    if (
+        link.classList.contains("move-to-done") ||
+        link.classList.contains("move-to-todo")
+    ) {
+        e.preventDefault(); // pause navigation
+
+        const taskItem = link.closest(".task-item");
+        if (!taskItem) return;
+
+        taskItem.classList.add("task-move-out");
+
+        // After animation → let Django handle logic
+        setTimeout(() => {
+            window.location.href = link.href;
+        }, 300);
+    }
+});
+</script>
+
+</body>
+</html>
